@@ -1,0 +1,637 @@
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sistema de Control de Reservas | Patitas Viajeras Tours</title>
+
+    <!-- Librerías para generar PDF y Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f6fb;
+            color: #263238;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        /* LOGIN */
+        .login-fondo {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #123c69, #2878a8);
+        }
+
+        .login-tarjeta {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-tarjeta h1 {
+            text-align: center;
+            color: #123c69;
+            margin-bottom: 10px;
+            font-size: 25px;
+        }
+
+        .login-tarjeta p {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .campo {
+            margin-bottom: 16px;
+        }
+
+        .campo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        .campo input,
+        .campo select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        .campo input:focus,
+        .campo select:focus {
+            outline: 2px solid #2878a8;
+            border-color: transparent;
+        }
+
+        .boton {
+            border: none;
+            border-radius: 7px;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .boton:hover {
+            opacity: 0.88;
+        }
+
+        .boton-principal {
+            background: #1769aa;
+            color: white;
+        }
+
+        .boton-login {
+            width: 100%;
+            padding: 13px;
+            font-size: 16px;
+        }
+
+        .boton-secundario {
+            background: #e2e8f0;
+            color: #263238;
+        }
+
+        .boton-eliminar {
+            background: #dc3545;
+            color: white;
+        }
+
+        .boton-editar {
+            background: #f0ad4e;
+            color: #212529;
+        }
+
+        .mensaje {
+            margin-top: 15px;
+            color: #c62828;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* ENCABEZADO */
+        .encabezado {
+            background: #123c69;
+            color: white;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .encabezado h1 {
+            font-size: 25px;
+            margin-bottom: 5px;
+        }
+
+        .encabezado p {
+            color: #dbeafe;
+        }
+
+        /* CONTENIDO */
+        .contenedor {
+            width: 90%;
+            max-width: 1400px;
+            margin: 25px auto;
+        }
+
+        .titulo-seccion {
+            margin-bottom: 18px;
+            color: #123c69;
+        }
+
+        /* TARJETAS */
+        .resumen {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .tarjeta {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            border-left: 5px solid #1769aa;
+        }
+
+        .tarjeta p {
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .tarjeta h2 {
+            color: #123c69;
+            font-size: 25px;
+            overflow-wrap: anywhere;
+        }
+
+        /* FORMULARIO */
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            margin-bottom: 30px;
+        }
+
+        .formulario-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .costos-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .total {
+            background: #eaf3fb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0 20px;
+            color: #123c69;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* TABLA */
+        .barra-tabla {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .barra-tabla input {
+            padding: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            min-width: 240px;
+        }
+
+        .tabla-contenedor {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #123c69;
+            color: white;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        td .boton {
+            margin: 3px;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .estado-confirmada {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .estado-pendiente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .estado-cancelada {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .sin-resultados {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+
+        .pie {
+            text-align: center;
+            color: #64748b;
+            padding: 25px;
+            font-size: 13px;
+        }
+
+        /* ADAPTACIÓN A CELULARES */
+        @media (max-width: 900px) {
+            .resumen {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .costos-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .formulario-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .login-tarjeta {
+                padding: 25px;
+            }
+
+            .encabezado h1 {
+                font-size: 21px;
+            }
+
+            .contenedor {
+                width: 94%;
+                margin: 18px auto;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+
+            .resumen,
+            .formulario-grid,
+            .costos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .barra-tabla input {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PANTALLA DE INICIO DE SESIÓN -->
+    <section id="pantallaLogin" class="login-fondo">
+        <div class="login-tarjeta">
+            <h1>Patitas Viajeras Tours</h1>
+            <p>Sistema de Control de Reservas</p>
+
+            <form id="formLogin">
+                <div class="campo">
+                    <label for="usuario">Correo electrónico</label>
+                    <input
+                        type="email"
+                        id="usuario"
+                        name="usuario"
+                        placeholder="Ingresa tu correo"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="campo">
+                    <label for="contrasena">Contraseña</label>
+                    <input
+                        type="password"
+                        id="contrasena"
+                        name="contrasena"
+                        placeholder="Ingresa tu contraseña"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="boton boton-principal boton-login">
+                    Iniciar sesión
+                </button>
+
+                <p id="mensajeLogin" class="mensaje" role="alert"></p>
+            </form>
+        </div>
+    </section>
+
+    <!-- APLICACIÓN PRINCIPAL -->
+    <main id="aplicacion" hidden>
+
+        <header class="encabezado">
+            <div>
+                <h1>Patitas Viajeras Tours</h1>
+                <p>Sistema de Control de Reservas</p>
+            </div>
+
+            <button
+                type="button"
+                id="cerrarSesion"
+                class="boton boton-secundario"
+            >
+                Cerrar sesión
+            </button>
+        </header>
+
+        <div class="contenedor">
+
+            <!-- RESUMEN -->
+            <h2 class="titulo-seccion">Resumen de reservaciones</h2>
+
+            <section class="resumen">
+                <article class="tarjeta">
+                    <p>Total de reservas</p>
+                    <h2 id="totalReservas">0</h2>
+                </article>
+
+                <article class="tarjeta">
+                    <p>Reservas confirmadas</p>
+                    <h2 id="reservasConfirmadas">0</h2>
+                </article>
+
+                <article class="tarjeta">
+                    <p>Reservas pendientes</p>
+                    <h2 id="reservasPendientes">0</h2>
+                </article>
+
+                <article class="tarjeta">
+                    <p>Importe total</p>
+                    <h2 id="importeTotal">$0.00</h2>
+                </article>
+            </section>
+
+            <!-- FORMULARIO DE RESERVAS -->
+            <section class="panel">
+                <h2 class="titulo-seccion" id="tituloFormulario">
+                    Registrar nueva reserva
+                </h2>
+
+                <form id="formReserva">
+
+                    <div class="formulario-grid">
+                        <div class="campo">
+                            <label for="numeroReserva">Número de reserva</label>
+                            <input
+                                type="text"
+                                id="numeroReserva"
+                                name="numeroReserva"
+                                placeholder="Ej. PV-001"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="estado">Estado de la reserva</label>
+                            <select id="estado" name="estado" required>
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Confirmada">Confirmada</option>
+                                <option value="Cancelada">Cancelada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 class="titulo-seccion">Desglose de costos</h3>
+
+                    <div class="costos-grid">
+                        <div class="campo">
+                            <label for="vuelos">Vuelos ($)</label>
+                            <input
+                                type="number"
+                                id="vuelos"
+                                name="vuelos"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="hospedaje">Hospedaje ($)</label>
+                            <input
+                                type="number"
+                                id="hospedaje"
+                                name="hospedaje"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="traslado">Traslado ($)</label>
+                            <input
+                                type="number"
+                                id="traslado"
+                                name="traslado"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="asientos">Asientos ($)</label>
+                            <input
+                                type="number"
+                                id="asientos"
+                                name="asientos"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="tua">TUA ($)</label>
+                            <input
+                                type="number"
+                                id="tua"
+                                name="tua"
+                                min="0"
+                                step="0.01"
+                                value="0"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="total">
+                        Total de la reserva:
+                        <span id="total">$0.00</span>
+                    </div>
+
+                    <div class="acciones">
+                        <button
+                            type="submit"
+                            id="guardarReserva"
+                            class="boton boton-principal"
+                        >
+                            Guardar reserva
+                        </button>
+
+                        <button
+                            type="button"
+                            id="cancelarEdicion"
+                            class="boton boton-secundario"
+                            hidden
+                        >
+                            Cancelar edición
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- TABLA DE RESERVAS -->
+            <section class="panel">
+                <div class="barra-tabla">
+                    <h2 class="titulo-seccion">Reservas registradas</h2>
+
+                    <input
+                        type="search"
+                        id="buscarReserva"
+                        placeholder="Buscar por número de reserva..."
+                        aria-label="Buscar reserva"
+                    >
+
+                    <button
+                        type="button"
+                        id="exportarExcel"
+                        class="boton boton-principal"
+                    >
+                        Exportar a Excel
+                    </button>
+                </div>
+
+                <div class="tabla-contenedor">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Vuelos</th>
+                                <th>Hospedaje</th>
+                                <th>Traslado</th>
+                                <th>Asientos</th>
+                                <th>TUA</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="tablaReservas">
+                            <tr>
+                                <td colspan="9" class="sin-resultados">
+                                    Cargando reservas...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+
+        <footer class="pie">
+            Patitas Viajeras Tours · Sistema de Control de Reservas
+        </footer>
+
+    </main>
+
+    <!-- Importante: app.js debe ejecutarse como módulo para Firebase -->
+    <script type="module" src="./app.js"></script>
+
+</body>
+</html>
