@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -13,6 +14,19 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
     <style>
+        :root {
+            --azul: #123C69;
+            --azul-claro: #1769AA;
+            --turquesa: #20B8B0;
+            --turquesa-oscuro: #148F8A;
+            --fondo: #F2F8FC;
+            --texto: #243447;
+            --gris: #64748B;
+            --borde: #D9E7F0;
+            --blanco: #FFFFFF;
+            --verde: #18764A;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -21,43 +35,44 @@
         }
 
         body {
-            background: #f3f6fb;
-            color: #263238;
+            background: var(--fondo);
+            color: var(--texto);
         }
 
         [hidden] {
             display: none !important;
         }
 
-        /* LOGIN */
+        /* INICIO DE SESIÓN */
         .login-fondo {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: linear-gradient(135deg, #123c69, #2878a8);
+            background: linear-gradient(135deg, var(--azul), var(--azul-claro), var(--turquesa));
         }
 
         .login-tarjeta {
-            background: white;
+            background: var(--blanco);
             width: 100%;
             max-width: 420px;
             padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+            border-radius: 18px;
+            border-top: 6px solid var(--turquesa);
+            box-shadow: 0 15px 40px rgba(18, 60, 105, 0.22);
         }
 
         .login-tarjeta h1 {
             text-align: center;
-            color: #123c69;
+            color: var(--azul);
             margin-bottom: 10px;
             font-size: 25px;
         }
 
         .login-tarjeta p {
             text-align: center;
-            color: #64748b;
+            color: var(--gris);
             margin-bottom: 25px;
         }
 
@@ -69,104 +84,139 @@
             display: block;
             font-weight: bold;
             margin-bottom: 7px;
+            color: var(--azul);
         }
 
         .campo input,
         .campo select {
             width: 100%;
             padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
             font-size: 15px;
+            background: var(--blanco);
+            color: var(--texto);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .campo input:focus,
         .campo select:focus {
-            outline: 2px solid #2878a8;
-            border-color: transparent;
+            outline: none;
+            border-color: var(--turquesa);
+            box-shadow: 0 0 0 3px rgba(32, 184, 176, 0.16);
         }
 
+        /* BOTONES */
         .boton {
             border: none;
-            border-radius: 7px;
+            border-radius: 8px;
             padding: 11px 16px;
             cursor: pointer;
             font-weight: bold;
             font-size: 14px;
-            transition: 0.2s;
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
         }
 
         .boton:hover {
-            opacity: 0.88;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(18, 60, 105, 0.12);
+        }
+
+        .boton:active {
+            transform: translateY(0);
         }
 
         .boton-principal {
-            background: #1769aa;
-            color: white;
+            background: var(--azul-claro);
+            color: var(--blanco);
+        }
+
+        .boton-principal:hover {
+            background: var(--azul);
         }
 
         .boton-login {
             width: 100%;
             padding: 13px;
             font-size: 16px;
+            background: var(--turquesa-oscuro);
+            color: var(--blanco);
+        }
+
+        .boton-login:hover {
+            background: var(--azul);
         }
 
         .boton-secundario {
-            background: #e2e8f0;
-            color: #263238;
+            background: #E7F1F8;
+            color: var(--azul);
+        }
+
+        .boton-secundario:hover {
+            background: #D4E7F3;
         }
 
         .boton-eliminar {
-            background: #dc3545;
-            color: white;
+            background: #DC3545;
+            color: var(--blanco);
+        }
+
+        .boton-eliminar:hover {
+            background: #B92332;
         }
 
         .boton-editar {
-            background: #f0ad4e;
-            color: #212529;
+            background: #F5C46B;
+            color: #503600;
+        }
+
+        .boton-editar:hover {
+            background: #E9AE43;
         }
 
         .mensaje {
             margin-top: 15px;
-            color: #c62828;
+            color: #C62828;
             font-size: 14px;
             text-align: center;
         }
 
-        /* ENCABEZADO */
+        /* ENCABEZADO PRINCIPAL */
         .encabezado {
-            background: #123c69;
-            color: white;
-            padding: 20px 5%;
+            background: linear-gradient(115deg, var(--azul), var(--azul-claro));
+            color: var(--blanco);
+            padding: 24px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
+            border-bottom: 5px solid var(--turquesa);
+            box-shadow: 0 4px 14px rgba(18, 60, 105, 0.15);
         }
 
         .encabezado h1 {
-            font-size: 25px;
-            margin-bottom: 5px;
+            font-size: 27px;
+            margin-bottom: 7px;
         }
 
         .encabezado p {
-            color: #dbeafe;
+            color: #DDF9F7;
         }
 
         /* CONTENIDO */
         .contenedor {
             width: 90%;
             max-width: 1400px;
-            margin: 25px auto;
+            margin: 30px auto;
         }
 
         .titulo-seccion {
             margin-bottom: 18px;
-            color: #123c69;
+            color: var(--azul);
         }
 
-        /* TARJETAS */
+        /* TARJETAS DE RESUMEN */
         .resumen {
             display: grid;
             grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -175,30 +225,41 @@
         }
 
         .tarjeta {
-            background: white;
-            padding: 22px;
+            background: var(--blanco);
+            padding: 23px;
             border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
-            border-left: 5px solid #1769aa;
+            box-shadow: 0 4px 14px rgba(18, 60, 105, 0.07);
+            border-left: 5px solid var(--turquesa);
+            border-top: 1px solid var(--borde);
+            border-right: 1px solid var(--borde);
+            border-bottom: 1px solid var(--borde);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .tarjeta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(18, 60, 105, 0.12);
         }
 
         .tarjeta p {
-            color: #64748b;
+            color: var(--gris);
             margin-bottom: 10px;
+            font-size: 14px;
         }
 
         .tarjeta h2 {
-            color: #123c69;
-            font-size: 25px;
+            color: var(--azul);
+            font-size: 26px;
             overflow-wrap: anywhere;
         }
 
         /* FORMULARIO */
         .panel {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+            background: var(--blanco);
+            padding: 26px;
+            border-radius: 13px;
+            box-shadow: 0 4px 16px rgba(18, 60, 105, 0.06);
+            border: 1px solid var(--borde);
             margin-bottom: 30px;
         }
 
@@ -215,13 +276,18 @@
         }
 
         .total {
-            background: #eaf3fb;
-            padding: 15px;
-            border-radius: 8px;
+            background: linear-gradient(100deg, #E5F5FC, #DDF8F5);
+            padding: 17px;
+            border-radius: 9px;
             margin: 10px 0 20px;
-            color: #123c69;
+            color: var(--azul);
             font-size: 20px;
             font-weight: bold;
+            border-left: 5px solid var(--turquesa);
+        }
+
+        #total {
+            color: var(--turquesa-oscuro);
         }
 
         .acciones {
@@ -231,7 +297,7 @@
             margin-top: 15px;
         }
 
-        /* TABLA */
+        /* TABLA DE RESERVAS */
         .barra-tabla {
             display: flex;
             justify-content: space-between;
@@ -242,37 +308,53 @@
         }
 
         .barra-tabla input {
-            padding: 11px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
+            padding: 12px;
+            border: 1px solid var(--borde);
+            border-radius: 8px;
             min-width: 240px;
+            font-size: 14px;
+            color: var(--texto);
+        }
+
+        .barra-tabla input:focus {
+            outline: none;
+            border-color: var(--turquesa);
+            box-shadow: 0 0 0 3px rgba(32, 184, 176, 0.14);
         }
 
         .tabla-contenedor {
             width: 100%;
             overflow-x: auto;
+            border-radius: 8px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             min-width: 900px;
+            background: var(--blanco);
         }
 
         th,
         td {
-            padding: 13px;
+            padding: 14px;
             text-align: left;
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--borde);
         }
 
         th {
-            background: #123c69;
-            color: white;
+            background: var(--azul);
+            color: var(--blanco);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #F7FBFE;
         }
 
         tbody tr:hover {
-            background: #f8fafc;
+            background: #E7F8F7;
         }
 
         td .boton {
@@ -281,41 +363,45 @@
 
         .estado {
             display: inline-block;
-            padding: 5px 9px;
+            padding: 6px 10px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         .estado-confirmada {
-            background: #d1fae5;
-            color: #065f46;
+            background: #D1FAE5;
+            color: #065F46;
         }
 
         .estado-pendiente {
-            background: #fef3c7;
-            color: #92400e;
+            background: #FEF3C7;
+            color: #92400E;
         }
 
         .estado-cancelada {
-            background: #fee2e2;
-            color: #991b1b;
+            background: #FEE2E2;
+            color: #991B1B;
         }
 
         .sin-resultados {
             text-align: center;
             padding: 25px;
-            color: #64748b;
+            color: var(--gris);
         }
 
+        /* PIE DE PÁGINA */
         .pie {
             text-align: center;
-            color: #64748b;
+            color: var(--gris);
             padding: 25px;
             font-size: 13px;
+            border-top: 1px solid var(--borde);
+            background: var(--blanco);
         }
 
-        /* ADAPTACIÓN A CELULARES */
+        /* ADAPTACIÓN A TABLETAS */
         @media (max-width: 900px) {
             .resumen {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -330,9 +416,14 @@
             }
         }
 
+        /* ADAPTACIÓN A CELULARES */
         @media (max-width: 600px) {
             .login-tarjeta {
                 padding: 25px;
+            }
+
+            .encabezado {
+                padding: 20px 5%;
             }
 
             .encabezado h1 {
@@ -354,9 +445,21 @@
                 grid-template-columns: 1fr;
             }
 
+            .barra-tabla {
+                align-items: stretch;
+            }
+
             .barra-tabla input {
                 width: 100%;
                 min-width: 0;
+            }
+
+            .barra-tabla .boton {
+                width: 100%;
+            }
+
+            .total {
+                font-size: 18px;
             }
         }
     </style>
@@ -630,7 +733,7 @@
 
     </main>
 
-    <!-- Importante: app.js debe ejecutarse como módulo para Firebase -->
+    <!-- Se conserva la conexión con app.js y Firebase -->
     <script type="module" src="./app.js"></script>
 
 </body>
